@@ -3,7 +3,7 @@ import sys
 
 class CliArgs:
     def __init__(self, args):
-        if(args == None):
+        if (args == None):
             raise RuntimeError("'args' was None. Make sure you provide arguments")
         arg_len = len(args)
         if (arg_len < 5):
@@ -23,6 +23,17 @@ class CliArgs:
 
     def __str__(self):
         return "b: %s; m: %s; x: %s; i: %s" % self.cli_args()
+
+
+def is_prime(n):
+    if n == 0 or n == 1:
+        return False
+    for i in range(2, n):
+        if n % i == 0:
+            print("%s was not prime (divisible by %s)" % (n, i))
+            return False
+    print("%s is prime" % (n))
+    return True
 
 
 if __name__ == "__main__":
