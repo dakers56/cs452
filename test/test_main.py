@@ -112,3 +112,20 @@ def test_period():
     assert(period.r_seg == [10,12])
     assert(period.length == 2)
     assert(period.val == 10)
+
+    mod = 25
+    seq = __make_seq(mod)
+    period = Period(seq)
+    assert(period.i_seg == [1,10])
+    assert(period.r_seg == [0])
+    assert(period.length == 1)
+    assert(period.val == 0)
+
+    mod = 37
+    seq = __make_seq(mod)
+    period = Period(seq)
+    assert(period.i_seg == [])
+    assert(period.r_seg == [1,10,26])
+    assert(period.length == 3)
+    assert(period.val == 1)
+
