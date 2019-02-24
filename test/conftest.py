@@ -4,6 +4,7 @@ import subprocess
 
 PRIMES = None #Set at bottom of file. Declared here for visibility.
 TOTIENTS = None
+CARMS = None
 
 def ld_primes():
     primes = []
@@ -50,7 +51,17 @@ def ld_totients():
         totients = f.readlines()
     return [int(str(t).replace("\n", "")) for t in totients]
 
+def carm_dir():
+    return data_dir() + "/" + "carmichael"
+
+def ld_carms():
+    carms = []
+    with open(full_path(carm_dir(), "carmichael-1-81.txt"), 'r') as f:
+        carms = f.readlines()
+    return [int(str(t).replace("\n", "")) for t in carms]
+
 PRIMES = ld_primes()
 TOTIENTS = ld_totients()
-for i,t in enumerate(TOTIENTS):
-    print(i+1,t)
+CARMS = ld_carms()
+
+

@@ -2,6 +2,7 @@ PRIMES = None
 
 
 def is_prime(n):
+    n = int(n)
     if n == 0 or n == 1:
         return False
     for i in range(2, n):
@@ -114,17 +115,83 @@ def prime_factorization(n):
             return pf + prime_factorization(int(n / p))
 
 
+class PrimeFactorization:
+    def __init__(self, n):
+        self.n = n
+        self.raw = prime_factorization(n)
+        self.fact_dict = {i: self.raw.count(i) for i in self.raw}
 
-def __prime_fac_test(n):
-    for m in n:
-        assert (is_prime(m))
+    def fac_str(self, n):
+        return str(n) + (("^" + str(self.fact_dict[n])) if self.fact_dict[n] > 1 else "")
+
+    def __str__(self):
+        str_ = ""
+        for f in self.fact_dict.keys():
+            if str_ == "":
+                str_ = self.fac_str(f)
+            else:
+                str_ += " * " + self.fac_str(f)
+        return str_
+
+    def carmichael_comps(self):
+        comps = []
+        for pr, pow in self.fact_dict.items():
+            if pr >= 3 or pow <= 2:
+                comps += [euler_totient(pr ** pow)]
+            elif pr == 2 and pow >= 3:
+                comps += [(1 / 2) * euler_totient(pr ** pow)]
+        return comps
 
 
-def test_prime_fac():
-    for i in range(5000):
-        pf = prime_factorization(i)
-        print(pf)
-        __prime_fac_test(pf)
+def lcm(nums):
+    if nums is None or len(nums) == 0:
+        raise RuntimeError("nums cannot be empty/None")
+    pf = []
+    for n in nums:
+        pf += [PrimeFactorization(n)]
+    lcm_dict = pf[0].fact_dict
+    for pf_ in pf:
+        for k, v in pf_.fact_dict.items():
+            if k not in lcm_dict:
+                lcm_dict[k] = v
+            else:
+                lcm_dict[k] = max(lcm_dict[k], v)
+
+    res = 1
+    for k, v in lcm_dict.items():
+        res *= int((k ** v))
+    return res
+
+
+def carmichael(n):
+    return lcm(PrimeFactorization(n).carmichael_comps())
+
+
+class Period:
+    def __init__(self, seq):
+        self.seq = seq
+        self.length, self.val, self.occ_1 = self.__period(self.seq)
+        self.i_seg = seq[:self.occ_1]
+        self.r_seg = seq[self.occ_1:self.occ_1 + self.length]
+
+    def __period(self, seq):
+        found = {}
+        for i, j in enumerate(seq):
+            if j in found:
+                return i - found[j], j, found[j]
+            found[j] = i
+        raise RuntimeError("No repeating sequence found.")
+
+    def __str__(self, *args, **kwargs):
+        return "Seq: %s; Initial segment: %s; Repeating segment: %s; Value: %s; Length: %s" % (self.seq, self.i_seg, self.r_seg, self.val, self.length)
+
+
+def test_seq(mod, base=10):
+    seq = []
+    for pow in range(10):
+        seq += [(base ** pow) % mod]
+    return seq
+
 
 if __name__ == "__main__":
-    test_prime_fac()
+    print(Period(test_seq(22)))

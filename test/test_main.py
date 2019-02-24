@@ -1,5 +1,5 @@
-from main import factors_of_n, common_factors, gcd_is_1, euler_totient, is_prime, ld_primes as ld_primes_main, prime_factorization
-from test.conftest import PRIMES, TOTIENTS
+from main import factors_of_n, common_factors, gcd_is_1, euler_totient, is_prime, ld_primes as ld_primes_main, prime_factorization, lcm, carmichael, Period
+from test.conftest import PRIMES, TOTIENTS, CARMS
 
 
 # def test_even_factors_of():
@@ -76,12 +76,39 @@ from test.conftest import PRIMES, TOTIENTS
 #             assert(primes[i] == PRIMES[i])
 
 
-def __prime_fac_test(n):
-    for m in n:
-        assert(is_prime(m))
+# def __prime_fac_test(n):
+#     for m in n:
+#         assert(is_prime(m))
+#
+# def test_prime_fac():
+#     for i in range(5000):
+#         pf = prime_factorization(i)
+#         print(pf)
+#         __prime_fac_test(pf)
 
-def test_prime_fac():
-    for i in range(5000):
-        pf = prime_factorization(i)
-        print(pf)
-        __prime_fac_test(pf)
+# def test_lcm():
+#     lcm_dict = {12:[4,6], 130:[65,10,5], 6914628732:[54321, 789, 484]}
+#     for k,v in lcm_dict.items():
+#         assert (lcm(v) == k)
+
+
+def test_carms():
+    for i in range(2, len(TOTIENTS)):
+        print("Actual carmichael(%s): %s" % (i+1, carmichael(i+1)))
+        print("Expected euler_totient(%s): %s" % (i, CARMS[i]))
+        assert(carmichael(i+1) == CARMS[i])
+
+def __make_seq(mod, base=10):
+    seq = []
+    for pow in range(10):
+        seq += [(base ** pow) % mod]
+    return seq
+
+def test_period():
+    mod = 22
+    seq = __make_seq(mod)
+    period = Period(seq)
+    assert(period.i_seg == [1])
+    assert(period.r_seg == [10,12])
+    assert(period.length == 2)
+    assert(period.val == 10)
