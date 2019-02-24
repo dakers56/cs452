@@ -3,6 +3,7 @@ import os
 import subprocess
 
 PRIMES = None #Set at bottom of file. Declared here for visibility.
+TOTIENTS = None
 
 def ld_primes():
     primes = []
@@ -40,5 +41,16 @@ def unzip_files(dir_):
 def full_path(dir_, fn):
     return dir_ + "/" + fn
 
+def totient_dir():
+    return data_dir() + "/" + "totient"
+
+def ld_totients():
+    totients = []
+    with open(full_path(totient_dir(), "totient-1-69.txt"), 'r') as f:
+        totients = f.readlines()
+    return [int(str(t).replace("\n", "")) for t in totients]
 
 PRIMES = ld_primes()
+TOTIENTS = ld_totients()
+for i,t in enumerate(TOTIENTS):
+    print(i+1,t)

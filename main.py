@@ -75,7 +75,17 @@ def gcd_is_1(n, m):
 def common_factors(n, m, incl_n=True):
     return set(factors_of_n(n, incl_n=incl_n)).intersection(set(factors_of_n(m, incl_n=incl_n)))
 
+def euler_totient(n):
+    if n == 0:
+        return 0
+    n_totatives = 1 #Accounting for 1
+    for i in range(2,n):
+        if gcd_is_1(n,i):
+            n_totatives += 1
+    return n_totatives
+
 
 if __name__ == "__main__":
+    print("Testing Euler totient function")
     for i in range(10):
-        print("GCD of %s, %s is 1: %s" % (i, 10, gcd_is_1(i, 10)))
+        print("euler_totient(%s) = %s" % (i, euler_totient(i)))
