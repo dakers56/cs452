@@ -1,3 +1,30 @@
+PRIMES = None
+
+
+def is_prime(n):
+    if n == 0 or n == 1:
+        return False
+    for i in range(2, n):
+        if n % i == 0:
+            return False
+    return True
+
+
+def ld_primes(n=1000):
+    primes = []
+    i = 1
+    j = 2
+    while i < n:
+        if is_prime(j):
+            primes += [j]
+            i += 1
+        j += 1
+    return primes
+
+
+PRIMES = ld_primes()
+
+
 class CliArgs:
     def __init__(self, args):
         if (args == None):
@@ -20,17 +47,6 @@ class CliArgs:
 
     def __str__(self):
         return "b: %s; m: %s; x: %s; i: %s" % self.cli_args()
-
-
-def is_prime(n):
-    if n == 0 or n == 1:
-        return False
-    for i in range(2, n):
-        if n % i == 0:
-            print("%s was not prime (divisible by %s)" % (n, i))
-            return False
-    print("%s is prime" % (n))
-    return True
 
 
 class RepSeq:
@@ -75,17 +91,40 @@ def gcd_is_1(n, m):
 def common_factors(n, m, incl_n=True):
     return set(factors_of_n(n, incl_n=incl_n)).intersection(set(factors_of_n(m, incl_n=incl_n)))
 
+
 def euler_totient(n):
     if n == 0:
         return 0
-    n_totatives = 1 #Accounting for 1
-    for i in range(2,n):
-        if gcd_is_1(n,i):
+    n_totatives = 1  # Accounting for 1
+    for i in range(2, n):
+        if gcd_is_1(n, i):
             n_totatives += 1
     return n_totatives
 
 
+def prime_factorization(n):
+    pf = []
+    if is_prime(n):
+        return pf + [n]
+    for p in PRIMES:
+        if p > n:
+            return pf
+        if n % p == 0:
+            pf += [p]
+            return pf + prime_factorization(int(n / p))
+
+
+
+def __prime_fac_test(n):
+    for m in n:
+        assert (is_prime(m))
+
+
+def test_prime_fac():
+    for i in range(5000):
+        pf = prime_factorization(i)
+        print(pf)
+        __prime_fac_test(pf)
+
 if __name__ == "__main__":
-    print("Testing Euler totient function")
-    for i in range(10):
-        print("euler_totient(%s) = %s" % (i, euler_totient(i)))
+    test_prime_fac()

@@ -1,4 +1,4 @@
-from main import factors_of_n, common_factors, gcd_is_1, euler_totient
+from main import factors_of_n, common_factors, gcd_is_1, euler_totient, is_prime, ld_primes as ld_primes_main, prime_factorization
 from test.conftest import PRIMES, TOTIENTS
 
 
@@ -64,8 +64,24 @@ from test.conftest import PRIMES, TOTIENTS
 #     for k, v in expected.items():
 #         assert (gcd_is_1(34, k) == v)
 
-def test_totient():
-    for i in range(len(TOTIENTS)):
-        print("Actual euler_totient(%s): %s" % (i+1, euler_totient(i+1)))
-        print("Expected euler_totient(%s): %s" % (i, TOTIENTS[i]))
-        assert(euler_totient(i+1) == TOTIENTS[i])
+# def test_totient():
+#     for i in range(len(TOTIENTS)):
+#         print("Actual euler_totient(%s): %s" % (i+1, euler_totient(i+1)))
+#         print("Expected euler_totient(%s): %s" % (i, TOTIENTS[i]))
+#         assert(euler_totient(i+1) == TOTIENTS[i])
+#
+# def test_ld_primes():
+#     primes = ld_primes_main()
+#     for i in range(len(PRIMES)):
+#             assert(primes[i] == PRIMES[i])
+
+
+def __prime_fac_test(n):
+    for m in n:
+        assert(is_prime(m))
+
+def test_prime_fac():
+    for i in range(5000):
+        pf = prime_factorization(i)
+        print(pf)
+        __prime_fac_test(pf)
