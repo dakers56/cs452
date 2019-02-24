@@ -1,6 +1,3 @@
-import sys
-
-
 class CliArgs:
     def __init__(self, args):
         if (args == None):
@@ -36,5 +33,49 @@ def is_prime(n):
     return True
 
 
+class RepSeq:
+    def __init__(self, mod, base=10):
+        self.base = base
+        self.mod = mod
+
+    def gen_seq(self):
+        ord_b = self.order_of()
+        rem = []
+        pow = []
+        for i in range(2 * ord_b):
+            rem.append((self.base ** i) % self.mod)
+            pow.append(self.base ** i)
+        return rem, pow
+
+    def seg_and_seq(self):
+        """ Returns the initial segment and repeating sequence for mod using base @base.
+        """
+        # For now, only worry about prime moduli
+
+    def order_of(self):
+        if is_prime(self.mod):
+            return self.mod - 1
+        raise RuntimeError("Only works for testing modulo a prime number")
+
+
+def factors_of_n(n, incl_n=False):
+    factors = []
+    if not n == 1 and incl_n:
+        factors.append(n)
+    for i in range(2, n):
+        if n % i == 0:
+            factors.append(i)
+    return factors
+
+
+def gcd_is_1(n, m):
+    return common_factors(n, m) == set()
+
+
+def common_factors(n, m, incl_n=True):
+    return set(factors_of_n(n, incl_n=incl_n)).intersection(set(factors_of_n(m, incl_n=incl_n)))
+
+
 if __name__ == "__main__":
-    print("Testing command line args. Input: %s" % CliArgs(sys.argv))
+    for i in range(10):
+        print("GCD of %s, %s is 1: %s" % (i, 10, gcd_is_1(i, 10)))
