@@ -1,4 +1,4 @@
-from main import Period, DFAState, DFA
+from main import Period, DFAState, DFA, RightToLeftString
 
 
 def __make_seq(mod, base=10):
@@ -98,3 +98,18 @@ def test_dfa():
             state_index.add((i, j))
 
     __assert_for_dfa(12, state_index, dfa)
+
+def test_rls():
+    test_str = "987654321"
+    rls = RightToLeftString(test_str)
+    for i in range(len(test_str)):
+        assert (rls.__next__() == int(test_str[len(test_str) - i - 1]))
+
+    test_str = "12345"
+    read = []
+    rls = RightToLeftString(test_str)
+    for i in rls:
+        read.append(i)
+    assert (read == [5,4,3,2,1])
+
+
