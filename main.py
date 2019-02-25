@@ -106,6 +106,20 @@ class DFA:
                 n += 1
         return n
 
+    def state(self, i, j):
+        return self.states[i][j]
+
+    def read(self, rls):
+        this_state= self.states[0][0] #begin at start state
+        for d in rls:
+            print("Digit read: %s" % d)
+            next_i, next_j = this_state.tran_func[d][0], this_state.tran_func[d][1]
+            this_state = self.state(next_i, next_j)
+            print("Next state indices: %s:%s" % (next_i,next_j))
+            print("Next state: %s" % this_state)
+
+
+
 
 class DFAState:
     def __init__(self, i, j, b, m, period=None):
@@ -156,12 +170,11 @@ class DFAState:
 
 if __name__ == "__main__":
     rls = RightToLeftString("831")
-    for s in rls:
-        print(s)
-        # mod = 5
-        # seq = [(10 ** p) % mod for p in range(2 * (mod + 1))]
-        #
-        # period = Period(seq)
-        # print("Period for division modulo %s: %s" % (mod, period))
-        # dfa_4 = DFA(mod=mod, base=10, seq=seq)
-        # print(dfa_4)
+    mod = 4
+    seq = [(10 ** p) % mod for p in range(2 * (mod + 1))]
+
+    period = Period(seq)
+    print("Period for division modulo %s: %s" % (mod, period))
+    dfa_4 = DFA(mod=mod, base=10, seq=seq)
+    print(dfa_4)
+    dfa_4.read(rls)
