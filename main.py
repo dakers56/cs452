@@ -218,8 +218,17 @@ class DFA:
     def __init__(self, mod, base, seq):
         self.m = mod
         self.base = base
-        self.w = base - 1
         self.period = Period(seq)
+        self.w = len(self.period.i_plus_r_seg)
+        self.states = [[DFAState(i=i, j=j, b=self.base, m=self.m, period=self.period) for j in range(mod)] for i in
+                       range(self.w)]
+
+    def __str__(self):
+        _str = ""
+        for i in range(self.w):
+            for j in range(self.m):
+                _str += str(self.states[i][j]) + "\n"
+        return _str
 
 
 class DFAState:
@@ -235,7 +244,7 @@ class DFAState:
         return self.tran_func[d]
 
     def __str__(self):
-        str_ = "["
+        str_ = "(%s, %s)[" % (self.i, self.j)
         for d in range(self.b - 1):
             str_ += "(%s, %s), " % (self.delta_of(d))
         str_ += "(%s, %s)]" % (self.delta_of(self.b - 1))
@@ -272,11 +281,5 @@ if __name__ == "__main__":
 
     period = Period(seq)
     print("Period for division modulo %s: %s" % (mod, period))
-    n_states = 0
-    for  i in range(len(period.i_plus_r_seg)):
-        for j in range(mod):
-            n_states += 1
-            print("DFA state with i = %s, j = %s, b = %s, mod = %s: %s" % (
-            i, j, 10, mod, DFAState(i=i, j=j, m=mod, b=10, period=period)))
-    print("Number of states: %s" % n_states)
-
+    dfa_4 = DFA(mod=mod, base=10, seq=seq)
+    print(dfa_4)
