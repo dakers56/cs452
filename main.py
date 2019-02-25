@@ -273,8 +273,8 @@ if __name__ == "__main__":
     period = Period(seq)
     print("Period for division modulo %s: %s" % (mod, period))
     n_states = 0
-    for  i in range(3):
-        for j in range(10):
+    for  i in range(len(period.i_plus_r_seg)):
+        for j in range(mod):
             n_states += 1
             print("DFA state with i = %s, j = %s, b = %s, mod = %s: %s" % (
             i, j, 10, mod, DFAState(i=i, j=j, m=mod, b=10, period=period)))
