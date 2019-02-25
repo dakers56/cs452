@@ -232,16 +232,21 @@ class DFA:
 
 
 class DFAState:
-    def __init__(self, i, j, b, m, period):
+    def __init__(self, i, j, b, m, period=None):
         self.i = i
         self.j = j
         self.b = b
         self.m = m
-        self.period = period
+        if period is not None:
+            self.period = period
+        else:
+            self.period = Period([(10 ** p) % mod for p in range(2 * (mod + 1))])
         self.tran_func = {d: self.__calc_delta_of(d) for d in range(b)}
+
 
     def delta_of(self, d):
         return self.tran_func[d]
+
 
     def __str__(self):
         str_ = "(%s, %s)[" % (self.i, self.j)
@@ -250,20 +255,26 @@ class DFAState:
         str_ += "(%s, %s)]" % (self.delta_of(self.b - 1))
         return str_
 
+
     def __in_init_seg(self):
         return self.i < len(self.period.i_seg)
+
 
     def next_in_i_seg(self):
         return self.i + 1
 
+
     def next_in_r_seg(self):
         return self.period.r_seg_start + ((self.j + 1 - self.period.r_seg_start) % len(self.period.r_seg))
+
 
     def current_period_val(self, in_i_seg=False):
         return self.period.i_plus_r_seg[self.i]
 
+
     def next_classifier_val(self, digit):
         return (self.j + (digit * self.current_period_val())) % self.m
+
 
     def __calc_delta_of(self, d):
         """ Returns the state transitioned to when b is read in the current state (i,j)."""
