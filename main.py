@@ -89,14 +89,18 @@ class DFA:
         self.base = base
         self.period = Period(seq)
         self.w = len(self.period.i_plus_r_seg)
-        self.states = [[DFAState(i=i, j=j, b=self.base, m=self.m, period=self.period) for j in range(mod)] for i in
-                       range(self.w)]
+        states_ = []
+        for i in range(self.w):
+            states_.append([])
+            for j in range(self.m):
+                states_[i].append(DFAState(i=i, j=j, b=self.base, m=self.m, period=self.period))
+        self.states = states_
 
     def __str__(self):
         _str = ""
         for i in range(self.w):
             for j in range(self.m):
-                _str += str(self.states[i][j]) + "\n"
+                _str += str(self.state(i, j)) + "\n"
         return _str + str(self.n_states())
 
     def n_states(self):
@@ -169,7 +173,7 @@ class DFAState:
 
 
 if __name__ == "__main__":
-    rls = RightToLeftString("831")
+    rls = RightToLeftString("8315678")
     mod = 4
     seq = [(10 ** p) % mod for p in range(2 * (mod + 1))]
 
