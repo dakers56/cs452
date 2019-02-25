@@ -43,6 +43,14 @@ class Period:
             self.seq, self.i_seg, self.r_seg, self.val, self.length)
 
 
+class RightToLeftString:
+    def __init__(self, normal_str):
+        self.str_stack = [*normal_str]
+
+    def next(self):
+        return self.str_stack.pop()
+
+
 def test_seq(mod, base=10):
     seq = []
     for pow in range(10):
@@ -141,10 +149,14 @@ class DFAState:
 
 
 if __name__ == "__main__":
-    mod = 5
-    seq = [(10 ** p) % mod for p in range(2 * (mod + 1))]
-
-    period = Period(seq)
-    print("Period for division modulo %s: %s" % (mod, period))
-    dfa_4 = DFA(mod=mod, base=10, seq=seq)
-    print(dfa_4)
+    rls = RightToLeftString("831")
+    print(rls.next())
+    print(rls.next())
+    print(rls.next())
+    # mod = 5
+    # seq = [(10 ** p) % mod for p in range(2 * (mod + 1))]
+    #
+    # period = Period(seq)
+    # print("Period for division modulo %s: %s" % (mod, period))
+    # dfa_4 = DFA(mod=mod, base=10, seq=seq)
+    # print(dfa_4)
