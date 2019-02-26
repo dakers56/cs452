@@ -173,21 +173,21 @@ class DFAState:
         return self.i + 1
 
     def next_in_r_seg(self):
-        return self.period.r_seg_start + ((self.j + 1 - self.period.r_seg_start) % len(self.period.r_seg))
+        return self.period.r_seg_start + ((self.i + 1) % len(self.period.r_seg))
 
     def current_period_val(self, in_i_seg=False):
         return self.period.i_plus_r_seg[self.i]
 
     def next_classifier_val(self, digit):
-        # print("----------------")
-        # print("Calculating next clasifier value.")
-        # print("(i,j) = (%s,%s)" % (self.i, self.j))
-        # print("digit = %s" % (digit))
-        # print("current_period_val = %s" % (self.current_period_val()))
-        # print("m = %s" % (self.m))
+        print("----------------")
+        print("Calculating next clasifier value.")
+        print("(i,j) = (%s,%s)" % (self.i, self.j))
+        print("digit = %s" % (digit))
+        print("current_period_val = %s" % (self.current_period_val()))
+        print("m = %s" % (self.m))
         res = (self.j + (digit * self.current_period_val())) % self.m
-        # print("result: %s" % res)
-        # print("----------------")
+        print("result: %s" % res)
+        print("----------------")
         return (self.j + (digit * self.current_period_val())) % self.m
 
     def __calc_delta_of(self, d):
@@ -256,6 +256,22 @@ class CliOutput:
         return self.init_seg() + "\n" + self.r_seg() + "\n" + self.states_and_deltas() + "\n" \
                + self.n_states() + "\n" + self.states_read_str() + "\n" + self.final_state().ar_str()
 
+def __rev_int(i):
+    i_str = str(i)
+    i_rev = []
+    for s in i_str:
+        i_rev.insert(0,s)
+    return i_rev
+
+def test_first_bad_mod():
+    for mod in range(2, 300):
+        for i in range(15, 1000):
+            print("---------------")
+            print("Testing i = %s, mod = %s (i * mod = %s)" % (i, mod, i * mod))
+            i_rev = __rev_int((i * mod))
+            dfa = DFA(mod=mod, base=10, accept_val=0)
+            last_state = dfa.read(i_rev)
+            assert (last_state.pop().is_accept())
 
 if __name__ == "__main__":
     cli_args = CliArgs(sys.argv)
@@ -264,3 +280,5 @@ if __name__ == "__main__":
     states_read = dfa_4.read(cli_args.x)
     output = CliOutput(dfa_4, states_read)
     print(output)
+
+    # test_first_bad_mod()
