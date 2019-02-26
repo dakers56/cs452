@@ -114,15 +114,14 @@ class DFA:
         return self.states[i][j]
 
     def read(self, rls):
-        this_state= self.states[0][0] #begin at start state
+        this_state = self.states[0][0]  # begin at start state
+        states_read = []
         for d in rls:
-            print("Digit read: %s" % d)
+            states_read.append(this_state)
             next_i, next_j = this_state.tran_func[d][0], this_state.tran_func[d][1]
             this_state = self.state(next_i, next_j)
-            print("Next state indices: %s:%s" % (next_i,next_j))
-            print("Next state: %s" % this_state)
-
-
+        states_read.append(this_state)
+        return states_read
 
 
 class DFAState:
@@ -141,11 +140,16 @@ class DFAState:
         return self.tran_func[d]
 
     def __str__(self):
-        str_ = "(%s, %s)[" % (self.i, self.j)
+        return self.i_j_str()
+
+    def i_j_str(self):
+        return "(%s, %s)" % (self.i, self.j)
+
+    def tf_str(self):
+        str_ = '['
         for d in range(self.b - 1):
             str_ += "(%s, %s), " % (self.delta_of(d))
         str_ += "(%s, %s)]" % (self.delta_of(self.b - 1))
-        return str_
 
     def __in_init_seg(self):
         return self.i < len(self.period.i_seg)
@@ -171,9 +175,32 @@ class DFAState:
             return self.i + 1, self.next_classifier_val(digit=d)
         return self.next_in_r_seg(), self.next_classifier_val(digit=d)
 
+    def REJECT(self):
+        return "reject"
+
+    def ACCEPT(self):
+        return "accept"
+
+    def is_accept(self):
+        return self.j == 0
+
+    def print_AR(self):
+        print(self.ACCEPT() if self.is_accept() else self.REJECT())
+
+
+class DFAStateList:
+    def __init__(self, dfa_states):
+        self.dfa_states = dfa_states
+
+    def __str__(self):
+        str_ = '[' + str(self.dfa_states[0])
+        for s in self.dfa_states[1:]:
+            str_ += ', ' + str(s.i_j_str())
+        return str_ + ']'
+
 
 if __name__ == "__main__":
-    rls = RightToLeftString("8315678")
+    rls = RightToLeftString("4")
     mod = 4
     seq = [(10 ** p) % mod for p in range(2 * (mod + 1))]
 
@@ -181,4 +208,6 @@ if __name__ == "__main__":
     print("Period for division modulo %s: %s" % (mod, period))
     dfa_4 = DFA(mod=mod, base=10, seq=seq)
     print(dfa_4)
-    dfa_4.read(rls)
+    states_read = dfa_4.read(rls)
+    print(DFAStateList(states_read))
+    states_read[len(states_read) - 1].print_AR()

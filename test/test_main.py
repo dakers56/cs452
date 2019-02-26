@@ -81,7 +81,7 @@ def test_dfa_states():
     __assert_for_dfa_states(n_states, states, state_index)
 
 
-def test_dfa():
+def test_dfa_1():
     mod = 4
     seq = [(10 ** p) % mod for p in range(2 * (mod + 1))]
     base = 10
@@ -99,6 +99,21 @@ def test_dfa():
 
     __assert_for_dfa(12, state_index, dfa)
 
+# def test_dfa_mod_4():
+#     mults_of_4 = [4 * n for n in range(1, 100000)]
+#     for n in mults_of_4:
+#         seq = [(10 ** p) % 4 for p in range(2 * (4 + 1))]
+#         dfa = DFA(mod=4, base=10, seq=seq)
+#         states_read = dfa.read(str(n))
+#         assert states_read[len(states_read) - 1].is_accept
+#
+#     not_mults_of_4 = [n for n in range(1, 100000) if not n % 4 == 0]
+#     for n in not_mults_of_4:
+#         seq = [(10 ** p) % 4 for p in range(2 * (4 + 1))]
+#         dfa = DFA(mod=4, base=10, seq=seq)
+#         states_read = dfa.read(str(n))
+#         assert (not states_read[len(states_read) - 1].is_accept)
+
 def test_rls():
     test_str = "987654321"
     rls = RightToLeftString(test_str)
@@ -111,5 +126,6 @@ def test_rls():
     for i in rls:
         read.append(i)
     assert (read == [5,4,3,2,1])
+
 
 
