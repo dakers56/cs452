@@ -1,3 +1,5 @@
+import sys
+
 class CliArgs:
     def __init__(self, args):
         if (args == None):
@@ -8,18 +10,27 @@ class CliArgs:
         try:
             self.b = int(args[1])
             self.m = int(args[2])
-            self.x = int(args[3])
-            self.i = int(args[4])
+            self.i = int(args[3])
+            self.x = self.read_x(args)
         except ValueError as v:
             raise ValueError("Provided invalid arguments. Ensure that they are integers: %s" % args)
+
+    def read_x(self, args):
+        x_str = ''
+        for s in args[4:]:
+            x_str += s
+        return x_str
+
+    def x_as_rls(self):
+        return RightToLeftString(self.x)
 
     def cli_args(self):
         """ Return arguments given to command line in expected order.
         """
-        return self.b, self.m, self.x, self.i
+        return self.b, self.m, self.i, self.x
 
     def __str__(self):
-        return "b: %s; m: %s; x: %s; i: %s" % self.cli_args()
+        return "b: %s; m: %s; i: %s; x: %s" % self.cli_args()
 
 
 class Period:
@@ -55,6 +66,16 @@ class RightToLeftString:
             return self.str_stack.pop()
         else:
             raise StopIteration()
+
+    # def __reverse(self):
+    #     reversed_ = []
+    #     for i in range(len(self.str_stack)):
+    #         reversed_.append(self.str_stack[len(self.str_stack) - 1 - i])
+    #     return str(reversed_)
+
+    # def __str__(self):
+    #     return self.__reverse()
+
 
 
 def test_seq(mod, base=10):
@@ -238,10 +259,12 @@ if __name__ == "__main__":
     mod = 4
     seq = [(10 ** p) % mod for p in range(2 * (mod + 1))]
 
+    cli_args = CliArgs(sys.argv)
+    print(cli_args)
+    # print("X as right to left string: %s" % cli_args.x_as_rls())
     period = Period(seq)
     print("Period for division modulo %s: %s" % (mod, period))
     dfa_4 = DFA(mod=mod, base=10, seq=seq)
     states_read = dfa_4.read(rls)
     output = CliOutput(dfa_4, states_read)
     print(output)
-    # states_read[len(states_read) - 1].print_AR()
