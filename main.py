@@ -150,6 +150,7 @@ class DFAState:
         for d in range(self.b - 1):
             str_ += "(%s, %s), " % (self.delta_of(d))
         str_ += "(%s, %s)]" % (self.delta_of(self.b - 1))
+        return str_
 
     def __in_init_seg(self):
         return self.i < len(self.period.i_seg)
@@ -184,8 +185,8 @@ class DFAState:
     def is_accept(self):
         return self.j == 0
 
-    def print_AR(self):
-        print(self.ACCEPT() if self.is_accept() else self.REJECT())
+    def ar_str(self):
+        return self.ACCEPT() if self.is_accept() else self.REJECT()
 
 
 class DFAStateList:
@@ -199,6 +200,39 @@ class DFAStateList:
         return str_ + ']'
 
 
+class CliOutput:
+    def __init__(self, dfa, states_read):
+        self.dfa = dfa
+        self.states_read = states_read
+
+    def init_seg(self):
+        return str(self.dfa.period.i_seg)
+
+    def r_seg(self):
+        return str(self.dfa.period.r_seg)
+
+    def states_and_deltas(self):
+        str_ = ''
+        for i in range(len(self.dfa.states)):
+            for j in range(len(self.dfa.states[i])):
+                this_state = self.dfa.state(i, j)
+                str_ += this_state.i_j_str() + this_state.tf_str() + "\n"
+        return str_.rstrip()
+
+    def n_states(self):
+        return str(self.dfa.n_states())
+
+    def states_read_str(self):
+        return str(DFAStateList(self.states_read))
+
+    def final_state(self):
+        return self.states_read[len(self.states_read) - 1]
+
+    def __str__(self):
+        return self.init_seg() + "\n" + self.r_seg() + "\n" + self.states_and_deltas() + "\n" \
+               + self.n_states() + "\n" + self.states_read_str() + "\n" + self.final_state().ar_str()
+
+
 if __name__ == "__main__":
     rls = RightToLeftString("4")
     mod = 4
@@ -207,7 +241,7 @@ if __name__ == "__main__":
     period = Period(seq)
     print("Period for division modulo %s: %s" % (mod, period))
     dfa_4 = DFA(mod=mod, base=10, seq=seq)
-    print(dfa_4)
     states_read = dfa_4.read(rls)
-    print(DFAStateList(states_read))
-    states_read[len(states_read) - 1].print_AR()
+    output = CliOutput(dfa_4, states_read)
+    print(output)
+    # states_read[len(states_read) - 1].print_AR()
