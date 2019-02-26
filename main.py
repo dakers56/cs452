@@ -1,5 +1,6 @@
 import sys
 
+
 class CliArgs:
     def __init__(self, args):
         if (args == None):
@@ -67,23 +68,6 @@ class RightToLeftString:
         else:
             raise StopIteration()
 
-    # def __reverse(self):
-    #     reversed_ = []
-    #     for i in range(len(self.str_stack)):
-    #         reversed_.append(self.str_stack[len(self.str_stack) - 1 - i])
-    #     return str(reversed_)
-
-    # def __str__(self):
-    #     return self.__reverse()
-
-
-
-def test_seq(mod, base=10):
-    seq = []
-    for pow in range(10):
-        seq += [(base ** pow) % mod]
-    return seq
-
 
 def from_base_10(n_b10, b):
     """Takes a number n_b10 in base 10 and returns it in the given base b."""
@@ -115,7 +99,8 @@ class DFA:
         for i in range(self.w):
             states_.append([])
             for j in range(self.m):
-                states_[i].append(DFAState(i=i, j=j, b=self.base, m=self.m, accept_val=self.accept_val, period=self.period))
+                states_[i].append(
+                    DFAState(i=i, j=j, b=self.base, m=self.m, accept_val=self.accept_val, period=self.period))
         self.states = states_
 
     def __str__(self):
@@ -127,7 +112,6 @@ class DFA:
 
     def __gen_seq(self):
         return [(self.base ** p) % self.m for p in range(2 * (self.m + 1))]
-
 
     def n_states(self):
         n = 0
@@ -144,7 +128,7 @@ class DFA:
         states_read = []
         for d in rls:
             states_read.append(this_state)
-            next_i, next_j = this_state.tran_func[d][0], this_state.tran_func[d][1]
+            next_i, next_j = this_state.tran_func[int(d)][0], this_state.tran_func[int(d)][1]
             this_state = self.state(next_i, next_j)
         states_read.append(this_state)
         return states_read
@@ -156,6 +140,7 @@ class DFAState:
         self.j = j
         self.b = b
         self.m = m
+        self.accept_val = accept_val
         if period is not None:
             self.period = period
         else:
@@ -209,7 +194,7 @@ class DFAState:
         return "accept"
 
     def is_accept(self):
-        return self.j == 0
+        return self.j == self.accept_val
 
     def ar_str(self):
         return self.ACCEPT() if self.is_accept() else self.REJECT()
@@ -260,16 +245,8 @@ class CliOutput:
 
 
 if __name__ == "__main__":
-    rls = RightToLeftString("4")
-    mod = 4
-    seq = [(10 ** p) % mod for p in range(2 * (mod + 1))]
-
     cli_args = CliArgs(sys.argv)
-    print(cli_args)
-    # print("X as right to left string: %s" % cli_args.x_as_rls())
-    period = Period(seq)
-    print("Period for division modulo %s: %s" % (mod, period))
     dfa_4 = DFA(mod=cli_args.m, base=cli_args.b, accept_val=cli_args.i)
-    states_read = dfa_4.read(rls)
+    states_read = dfa_4.read(cli_args.x)
     output = CliOutput(dfa_4, states_read)
     print(output)
