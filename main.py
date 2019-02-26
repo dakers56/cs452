@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import sys
 
 
@@ -12,7 +14,7 @@ class CliArgs:
             self.b = int(args[1])
             self.m = int(args[2])
             self.i = int(args[3])
-            self.x = self.read_x(args)
+            self.x = self.x_as_rls(self.read_x(args))
         except ValueError as v:
             raise ValueError("Provided invalid arguments. Ensure that they are integers: %s" % args)
 
@@ -22,8 +24,8 @@ class CliArgs:
             x_str += s
         return x_str
 
-    def x_as_rls(self):
-        return RightToLeftString(self.x)
+    def x_as_rls(self, x):
+        return RightToLeftString(x)
 
     def cli_args(self):
         """ Return arguments given to command line in expected order.
@@ -144,7 +146,7 @@ class DFAState:
         if period is not None:
             self.period = period
         else:
-            self.period = Period([(10 ** p) % mod for p in range(2 * (mod + 1))])
+            self.period = Period([(self.b ** p) % mod for p in range(2 * (mod + 1))])
         self.tran_func = {d: self.__calc_delta_of(d) for d in range(b)}
 
     def delta_of(self, d):
@@ -163,8 +165,8 @@ class DFAState:
         str_ += "(%s, %s)]" % (self.delta_of(self.b - 1))
         return str_
 
-    def __in_init_seg(self):
-        return self.i < len(self.period.i_seg)
+    def __next_in_init_seg(self):
+        return self.i < len(self.period.i_seg) - 1
 
     def next_in_i_seg(self):
         return self.i + 1
@@ -179,11 +181,7 @@ class DFAState:
         return (self.j + (digit * self.current_period_val())) % self.m
 
     def __calc_delta_of(self, d):
-        """ Returns the state transitioned to when b is read in the current state (i,j)."""
-        if ((self.j % len(self.period.r_seg)) > self.b):
-            raise RuntimeError("Repeating sequence was too long to calculate transition function: %s" % (
-                self.j % len(self.period.r_seg) > self.b))
-        if self.__in_init_seg():
+        if self.__next_in_init_seg():
             return self.i + 1, self.next_classifier_val(digit=d)
         return self.next_in_r_seg(), self.next_classifier_val(digit=d)
 
