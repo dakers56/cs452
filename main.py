@@ -105,10 +105,10 @@ def __test_from_base_10(n_b10, b):
 
 
 class DFA:
-    def __init__(self, mod, base, seq, accept_val):
+    def __init__(self, mod, base, accept_val):
         self.m = mod
         self.base = base
-        self.period = Period(seq)
+        self.period = Period(self.__gen_seq())
         self.w = len(self.period.i_plus_r_seg)
         self.accept_val = accept_val
         states_ = []
@@ -124,6 +124,10 @@ class DFA:
             for j in range(self.m):
                 _str += str(self.state(i, j)) + "\n"
         return _str + str(self.n_states())
+
+    def __gen_seq(self):
+        return [(self.base ** p) % self.m for p in range(2 * (self.m + 1))]
+
 
     def n_states(self):
         n = 0
@@ -265,7 +269,7 @@ if __name__ == "__main__":
     # print("X as right to left string: %s" % cli_args.x_as_rls())
     period = Period(seq)
     print("Period for division modulo %s: %s" % (mod, period))
-    dfa_4 = DFA(mod=cli_args.m, base=cli_args.b, accept_val=cli_args.i, seq=seq)
+    dfa_4 = DFA(mod=cli_args.m, base=cli_args.b, accept_val=cli_args.i)
     states_read = dfa_4.read(rls)
     output = CliOutput(dfa_4, states_read)
     print(output)
