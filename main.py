@@ -19,10 +19,11 @@ class CliArgs:
             raise ValueError("Provided invalid arguments. Ensure that they are integers: %s" % args)
 
     def read_x(self, args):
-        x_str = ''
+        x_str = []
         for s in args[4:]:
-            x_str += s
+            x_str.append(s)
         return x_str
+
 
     def x_as_rls(self, x):
         return RightToLeftString(x)
@@ -125,10 +126,15 @@ class DFA:
     def state(self, i, j):
         return self.states[i][j]
 
-    def read(self, rls):
+    def lt_b(self, x):
+        """ Returns whether x is less than the base provided. If not, we may need to examine the next digit"""
+        return int(x) < self.base
+
+
+    def read(self, string):
         this_state = self.states[0][0]  # begin at start state
         states_read = []
-        for d in rls:
+        for d in string:
             print("reading digit: %s" % d)
             states_read.append(this_state)
             next_i, next_j = this_state.tran_func[int(d)][0], this_state.tran_func[int(d)][1]
@@ -280,5 +286,3 @@ if __name__ == "__main__":
     states_read = dfa_4.read(cli_args.x)
     output = CliOutput(dfa_4, states_read)
     print(output)
-
-    # test_first_bad_mod()
